@@ -1,0 +1,5 @@
+<resources>
+    <dimen name="fab_margin">48dp</dimen>
+    <dimen name="vertical_space">8dp</dimen>
+    <dimen name="buttons_invoice_margin_top">100dp</dimen>
+</resources>

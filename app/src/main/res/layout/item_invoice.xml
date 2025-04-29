@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    >
+
+    <!-- Item producto -->
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="230dp"
+        android:background="@drawable/border_product"
+        android:padding="0dp"
+        tools:ignore="MissingConstraints">
+
+        <!-- Checkbox arriba a la izquierda -->
+
+        <!--TouchTargetSizeWarning desactivado porque el user no va a poder seleccionarlo, solo muestra-->
+        <!-- Botones para sumar y restar a la derecha-->
+        <LinearLayout
+            android:id="@+id/layout_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_name_invoice"
+            android:layout_alignParentEnd="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_invoice_cif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/CIF"
+                android:textSize="24sp"
+                />
+
+            <TextView
+                android:id="@+id/txt_invoice_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/date_invoice"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/txt_invoice_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/price_invoice"
+                android:textSize="24sp" />
+
+            <CheckBox
+                android:id="@+id/checkbox_invoice_paid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="90dp"
+                android:layout_marginTop="10dp"
+                android:enabled="false"
+                android:focusable="false"
+                android:text="@string/paid_invoice"
+                android:textSize="24sp"
+                tools:ignore="TouchTargetSizeWarning,TouchTargetSizeCheck" />
+        </LinearLayout>
+
+        <!-- Nombre del producto, en la parte inferior -->
+        <TextView
+            android:id="@+id/txt_name_invoice"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/border_name_product"
+            android:gravity="center"
+            android:text="@string/name_product"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_products"
+        android:title="Productos" />
+    <item
+        android:id="@+id/menu_users"
+        android:title="Usuarios" />
+    <item
+    android:id="@+id/menu_admin_users"
+    android:title="Administrar Usuarios" />
+    <item
+        android:id="@+id/menu_invoices"
+        android:title="Albaranes" />
+    <item
+        android:id="@+id/menu_inventory"
+        android:title="Inventario" />
+    <item
+        android:id="@+id/menu_generate_reports"
+        android:title="Generar Informes" />
+    <item
+        android:id="@+id/menu_logout"
+        android:title="Salir" />
+</menu>
