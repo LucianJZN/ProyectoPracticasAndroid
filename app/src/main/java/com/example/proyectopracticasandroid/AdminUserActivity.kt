@@ -18,61 +18,116 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.proyectopracticasandroid.adapter.UserAdapter
 import com.example.proyectopracticasandroid.api.RetrofitClient
-import com.example.proyectopracticasandroid.api.TokenStorage
 import com.example.proyectopracticasandroid.decoration.UserDecoration
 import com.example.proyectopracticasandroid.model.User
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
-class AdminUserActivity : AppCompatActivity() {
+class AdminUserActivity : BaseActivity() { //Hereda de BaseActivity
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapterUser: UserAdapter
     private var listUsers: MutableList<User> = mutableListOf()
-    private lateinit var tokenStorage: TokenStorage
-    private lateinit var selectImageLauncher: ActivityResultLauncher<Intent>    //para seleccionar imágenes de la galería
-    private var selectedImageUri: Uri? = null   // url de la imagen seleccionada en el diálogo
-    private lateinit var btnAddUser: Button     // botón para crear usuario
+    // tokenStorage hereda de BaseActivity
+    private lateinit var selectImageLauncher: ActivityResultLauncher<Intent>
+    private var selectedImageUri: Uri? = null
+    private lateinit var btnAddUser: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        //Llamamos primero al onCreate de BaseActivity para tener disponible todas sus implementaciones
         super.onCreate(savedInstanceState)
+        // Log para debuguear. BaseActivity.onCreate terminó y el usuario/rol se obtuvieron
+        Log.d("AdminUserActivity", "onCreate: super.onCreate finished. loggedInUser: ${loggedInUser?.name}, currentUserRole: $currentUserRole")
+
+        // Hay que establecer el layout de esta Activity
         setContentView(R.layout.activity_admin_user)
-        tokenStorage = TokenStorage(this)
+        Log.d("AdminUserActivity", "onCreate: Layout activity_admin_user set.")
+
+        // Configurar el nombre de la pantalla
+        val navTitleTextView = findViewById<TextView>(R.id.nav_title)
+        if (navTitleTextView == null) {
+            Log.e("AdminUserActivity", "ERROR: nav_title TextView no encontrado!")
+        } else {
+            navTitleTextView.text = getString(R.string.title_activity_admin_user)
+            Log.d("AdminUserActivity", "onCreate: nav_title TextView encontrado y texto asignado.")
+        }
+
+        // Configuración del RecyclerView y adaptador
+        recyclerView = findViewById(R.id.recycler_users)
+        if (recyclerView == null) {
+            Log.e("AdminUserActivity", "ERROR: recycler_users RecyclerView no encontrado!")
+        } else {
+            Log.d("AdminUserActivity", "onCreate: RecyclerView encontrado.")
+        }
+
+        val spanCount = adjustColumnsToScreenWidth()
+        recyclerView.layoutManager = GridLayoutManager(this, spanCount)
+        val verticalSpaceHeight = resources.getDimensionPixelSize(R.dimen.vertical_space)
+        recyclerView.addItemDecoration(UserDecoration.UserDecoration(verticalSpaceHeight))
+        Log.d("AdminUserActivity", "onCreate: RecyclerView configurado.")
+
+
+        // Botón para agregar usuarios
+        // Asegúrate de que R.id.btn_add_user exista en tu layout
+        btnAddUser = findViewById(R.id.btn_add_user)
+        if (btnAddUser == null) {
+            Log.e("AdminUserActivity", "ERROR: btn_add_user Button no encontrado!")
+        } else {
+            btnAddUser.setOnClickListener {showAddUserDialog() }
+            Log.d("AdminUserActivity", "onCreate: btn_add_user Button encontrado y listener asignado.")
+        }
 
         // Seleccionar imagen
         selectImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {   // La imagen fue seleccionada correctamente
+            if (result.resultCode == RESULT_OK) {
                 val uri: Uri? = result.data?.data
                 if (uri != null) {
                     selectedImageUri = uri
-                    Log.d("AdminUserActivity", "Imagen seleccionada URI: $uri")
+                    Log.d("AdminUserActivity", "ActivityResultLauncher: Imagen seleccionada URI: $uri")
+                } else {
+                    selectedImageUri = null
+                    Log.d("AdminUserActivity", "ActivityResultLauncher: URI de imagen seleccionada es nula.")
                 }
-            } else {    //Selección de imagen fallada
+            } else {
                 selectedImageUri = null
-                Log.d("AdminUserActivity", "Selección de imagen fallada.")
+                Log.d("AdminUserActivity", "ActivityResultLauncher: Selección de imagen fallada o cancelada.")
             }
         }
-        // Configurar el nombre de la pantalla
-        findViewById<TextView>(R.id.nav_title).text = getString(R.string.title_activity_admin_user)
+        Log.d("AdminUserActivity", "onCreate: selectImageLauncher inicializado.")
 
-        recyclerView = findViewById(R.id.recycler_users)
+        try {
+            val appBarView = findViewById<View>(R.id.app_bar_main)
+            if (appBarView == null) {
+                Log.e("AdminUserActivity", "ERROR FATAL: Layout incluido (R.id.app_bar_main) NO encontrado!")
+            } else {
+                Log.d("AdminUserActivity", "onCreate: Layout incluido (R.id.app_bar_main) encontrado.")
+                val btnMenu = appBarView.findViewById<View>(R.id.btn_simple_menu)
+                if (btnMenu == null) {
+                    Log.e("AdminUserActivity", "ERROR FATAL: Botón de menú (R.id.btn_simple_menu) NO encontrado dentro del layout incluido")
+                } else {
+                    // Si se encuentra, asigna el listener
+                    Log.d("AdminUserActivity", "ÉXITO: Botón de menú (btn_simple_menu) encontrado correctamente.")
+                    btnMenu.setOnClickListener { view ->
+                        // Log para confirmar que el click llega al listener
+                        Log.d("AdminUserActivity", "Botón de menú clickeado. Llamando a showSimpleMenu()")
+                        showSimpleMenu(view)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            // Captura cualquier excepción general durante la búsqueda de vistas
+            Log.e("AdminUserActivity", "ERROR FATAL: Excepción general al buscar vistas en onCreate: ${e.message}", e)
+            Toast.makeText(this, "Error interno al inicializar la pantalla (Excepción en búsqueda).", Toast.LENGTH_LONG).show()
+        }
 
-        //Ajustar columnas
-        val spanCount = adjustColumnsToScreenWidth()
-        recyclerView.layoutManager = GridLayoutManager(this, spanCount)
-        val verticalSpaceHeight = resources.getDimensionPixelSize(R.dimen.vertical_space) // Asegúrate de que este recurso existe
-        recyclerView.addItemDecoration(UserDecoration.UserDecoration(verticalSpaceHeight))
-
-        //Boton para agregar usuarios
-        btnAddUser = findViewById(R.id.btn_add_user)
-        btnAddUser.setOnClickListener {showAddUserDialog() }
-
+        // Obtener los usuarios de la API
+        Log.d("AdminUserActivity", "onCreate: Llamando a getAllUsersFromAPI().")
         getAllUsersFromAPI()
     }
 
@@ -83,28 +138,23 @@ class AdminUserActivity : AppCompatActivity() {
         return (screenWidth / itemWidth).toInt().coerceAtLeast(1)
     }
 
-    // Función para obtener todos los usuarios desde la API (PÚBLICA - NO NECESITA TOKEN)
     private fun getAllUsersFromAPI() {
         Toast.makeText(this, getString(R.string.msg_calling_api), Toast.LENGTH_SHORT).show()
-
-        //Mostrar usuarios habilitados
         lifecycleScope.launch {
             try {
                 val response: Response<List<User>> = RetrofitClient.apiService.getAllUsers()
-
                 if (response.isSuccessful) {
                     val users = response.body()
                     if (users != null) {
-                        //Ahora ordenamos: primero los habilitados y después alfabeticamente
                         val sortedUsers = users.sortedWith(compareBy<User> {
-                            if (it.enabled == true) 0 else 1    //los habilitados aparecen primero
+                            if (it.enabled == true) 0 else 1
                         }.thenBy {
-                            it.name ?: ""   //hace una ordenación por nombre automaticamente
+                            it.name ?: ""
                         })
 
                         listUsers = sortedUsers.toMutableList()
                         adapterUser = UserAdapter(listUsers) { clickedUser ->
-                            showEditUserDialog(clickedUser)     //Dialogo para editar/borrar
+                            showEditUserDialog(clickedUser)
                         }
                         recyclerView.adapter = adapterUser
                         Toast.makeText(this@AdminUserActivity, getString(R.string.msg_users_loaded), Toast.LENGTH_SHORT).show()
@@ -117,8 +167,6 @@ class AdminUserActivity : AppCompatActivity() {
                     val errorCode = response.code()
                     Log.e("AdminUserActivity", "Error de API al obtener usuarios: Código $errorCode, Contenido: $errorBody")
                     Toast.makeText(this@AdminUserActivity, getString(R.string.error_api_connection), Toast.LENGTH_SHORT).show()
-
-                    //Si devuelve 401 puede ser porque el token expiró, tiene que llevar al login
                 }
             } catch (e: Exception) {
                 Log.e("AdminUserActivity", "Error al obtener usuarios.", e)
@@ -126,10 +174,9 @@ class AdminUserActivity : AppCompatActivity() {
             }
         }
     }
-    // Diálogo de agregar Usuario
+
     private fun showAddUserDialog() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_admin_user, null)
-
         val dialogTitle = dialogView.findViewById<TextView>(R.id.dialog_title)
         val editName = dialogView.findViewById<EditText>(R.id.edit_edit_name)
         val editMail = dialogView.findViewById<EditText>(R.id.edit_edit_mail)
@@ -142,29 +189,24 @@ class AdminUserActivity : AppCompatActivity() {
         val imageUserPhoto = dialogView.findViewById<ImageView>(R.id.image_edit_user_photo)
         val btnSelectPhoto = dialogView.findViewById<Button>(R.id.btn_select_photo)
 
-        // Configurar el diálogo para agregar usuario
         dialogTitle?.text = "Agregar Nuevo Usuario"
         editName.setText("")
         editMail.setText("")
         editPassword.setText("")
         editPassword.visibility = View.VISIBLE
-        switchEnabled.isChecked = true // Por defecto el usuario esta habilitado
+        switchEnabled.isChecked = true
 
-        // Configurar Spinner para el Rol
         val roles = listOf("USUARIO", "ADMINISTRADOR")
         val adapterRoles = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, roles)
         spinnerRol.adapter = adapterRoles
-        spinnerRol.setSelection(roles.indexOf("USUARIO")) // Seleccionar rol USUARIO por defecto
+        spinnerRol.setSelection(roles.indexOf("USUARIO"))
 
-        // Ocultar el botón Eliminar en el modo agregar
         btnDelete.visibility = View.GONE
-
-        // Mostrar la imagen por defecto
         imageUserPhoto.setImageResource(R.drawable.img_product)
 
         val dialog = AlertDialog.Builder(this)
             .setView(dialogView)
-            .setCancelable(false) // El diálogo no se cierre al tocar fuera
+            .setCancelable(false)
             .create()
 
         btnSelectPhoto.setOnClickListener {
@@ -173,7 +215,6 @@ class AdminUserActivity : AppCompatActivity() {
             selectImageLauncher.launch(pickImageIntent)
         }
 
-        // Botón para guardar el usuario creado
         btnSave.setOnClickListener {
             val newName = editName.text.toString()
             val newMail = editMail.text.toString()
@@ -181,7 +222,6 @@ class AdminUserActivity : AppCompatActivity() {
             val newRol = spinnerRol.selectedItem.toString()
             val newEnabled = switchEnabled.isChecked
 
-            // Validaciones básicas
             if (newName.isBlank()) {
                 editName.error = "El nombre no puede estar vacío"
                 return@setOnClickListener
@@ -191,10 +231,9 @@ class AdminUserActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Enviamos URI de la imagen seleccionada como String.
             val imageToSend = selectedImageUri?.toString()
 
-            val newUser = User( //Creamos el usuario que mandaremos al servidor
+            val newUser = User(
                 userId = 0,
                 name = newName,
                 mail = newMail,
@@ -203,16 +242,15 @@ class AdminUserActivity : AppCompatActivity() {
                 rol = newRol,
                 enabled = newEnabled
             )
-            createUser(newUser, dialog) // Llamada a la API para crear usuario
+            createUser(newUser, dialog)
         }
-        btnCancel.setOnClickListener {   // Cerrar el dialogo
+        btnCancel.setOnClickListener {
             dialog.dismiss()
-            selectedImageUri = null // Limpiar la URI temporal
+            selectedImageUri = null
         }
         dialog.show()
-    }   //showAddUserDialog()
+    }
 
-    // Diálogo de editar Usuario
     private fun showEditUserDialog(userToEdit: User) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_admin_user, null)
         val dialogTitle = dialogView.findViewById<TextView>(R.id.dialog_title)
@@ -227,13 +265,12 @@ class AdminUserActivity : AppCompatActivity() {
         val imageUserPhoto = dialogView.findViewById<ImageView>(R.id.image_edit_user_photo)
         val btnSelectPhoto = dialogView.findViewById<Button>(R.id.btn_select_photo)
 
-        // Configurar el diálogo para editar
-        dialogTitle?.text = "Editar Usuario: ${userToEdit.name}" // Título Editar "Nombre Usuario"
-        editName.setText(userToEdit.name) // Cargar datos actuales del usuario
+        dialogTitle?.text = "Editar Usuario: ${userToEdit.name}"
+        editName.setText(userToEdit.name)
         editMail.setText(userToEdit.mail)
-        switchEnabled.isChecked = userToEdit.enabled ?: true // Usuario habilitado por defecto si es null, por se acaso
+        editPassword.visibility = View.GONE
+        switchEnabled.isChecked = userToEdit.enabled ?: true
 
-        // Configurar Spinner para el Rol
         val roles = listOf("USUARIO", "ADMINISTRADOR")
         val adapterRoles = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, roles)
         spinnerRol.adapter = adapterRoles
@@ -242,23 +279,21 @@ class AdminUserActivity : AppCompatActivity() {
             spinnerRol.setSelection(currentRoleIndex)
         }
 
-        btnDelete.visibility = View.VISIBLE // Botón Eliminar esté visible en modo editar
+        btnDelete.visibility = View.VISIBLE
 
-        // Cargar la imagen actual del usuario
         if (!userToEdit.image.isNullOrBlank()) {
             imageUserPhoto.load(userToEdit.image) {
                 crossfade(true)
-                placeholder(R.drawable.img_product) // Imagen mientras carga
-                error(R.drawable.img_product) // Imagen si falla la carga
+                placeholder(R.drawable.img_product)
+                error(R.drawable.img_product)
             }
         } else {
-            imageUserPhoto.setImageResource(R.drawable.img_product) // Si no hay imagen, mostrar la imagen por defecto
+            imageUserPhoto.setImageResource(R.drawable.img_product)
         }
 
         val dialog = AlertDialog.Builder(this)
-            //.setTitle("Editar Usuario: ${userToEdit.name}")
             .setView(dialogView)
-            .setCancelable(false) // No se cierra al tocar fuera
+            .setCancelable(false)
             .create()
 
         btnSelectPhoto.setOnClickListener {
@@ -267,9 +302,7 @@ class AdminUserActivity : AppCompatActivity() {
             selectImageLauncher.launch(pickImageIntent)
         }
 
-        // Botón para guardar el usuario actualizado
         btnSave.setOnClickListener {
-            // Obtener los nuevos datos del diálogo
             val newName = editName.text.toString()
             val newMail = editMail.text.toString()
             val newRol = spinnerRol.selectedItem.toString()
@@ -277,39 +310,36 @@ class AdminUserActivity : AppCompatActivity() {
 
             if (newName.isBlank()) {
                 editName.error = "El nombre no puede estar vacío"
-                return@setOnClickListener // Salir del listener si falla validación
+                return@setOnClickListener
             }
 
-            val imageToSend = selectedImageUri?.toString() ?: userToEdit.image //ruta de la imagen seleccionada o imagen original
-            //Creamos un user con los datos actualizados
+            val imageToSend = selectedImageUri?.toString() ?: userToEdit.image
+
             val updatedUser = User(
-                userId = userToEdit.userId, // Se mantiene el ID original
+                userId = userToEdit.userId,
                 name = newName,
                 mail = newMail,
                 image = imageToSend,
                 pass = userToEdit.pass,
                 rol = newRol,
-                enabled = newEnabled,
-                //invoices = null, // Sin relaciones
-                //sales = null // Sin relaciones
+                enabled = newEnabled
             )
-            updateUser(updatedUser, dialog) // Llamar a la API para actualizar usuario
+            updateUser(updatedUser, dialog)
         }
-        // Boton para eliminar usuario
+
         btnDelete.setOnClickListener {
-            dialog.dismiss() // Cerramos el dialogon antes de la confirmación
-            selectedImageUri = null // Limpiar la URI temporal si se elimina
-            showDeleteConfirmationDialog(userToEdit) // Mostrar el diálogo de confirmación de eliminación
+            dialog.dismiss()
+            selectedImageUri = null
+            showDeleteConfirmationDialog(userToEdit)
         }
-        // Botón para cancelar/salir del dialogo
+
         btnCancel.setOnClickListener {
             dialog.dismiss()
             selectedImageUri = null
         }
-        dialog.show()   // Mostrar el diálogo de edición
+        dialog.show()
     }
 
-    // Diálogo para confirmar la eliminación del usuario
     private fun showDeleteConfirmationDialog(userToDelete: User) {
         AlertDialog.Builder(this)
             .setTitle("Confirmar Eliminación")
@@ -323,28 +353,30 @@ class AdminUserActivity : AppCompatActivity() {
             }
             .show()
     }
+
+
     private fun deleteUserFromAPI(userId: Long) {
         Toast.makeText(this, "Eliminando usuario...", Toast.LENGTH_SHORT).show()
+        // Usa la propiedad 'tokenStorage' heredada de BaseActivity
         val token = tokenStorage.getAuthToken()
-        if (token == null) {        // Verificar si hay token , si no redirigir a login
+        if (token == null) {
             Log.w("AdminUserActivity", "deleteUserFromAPI: No hay token guardado. Redirigiendo a login.")
             Toast.makeText(this, "Sesión expirada o no iniciada.", Toast.LENGTH_LONG).show()
             startActivity(Intent(this, LoginUserActivity::class.java))
             finish()
             return
         }
-        // Formatear el token con Bearer
         val authTokenHeader = "Bearer $token"
         Log.d("AdminUserActivity", "deleteUserFromAPI: Usando token: ${authTokenHeader}")
 
         lifecycleScope.launch {
             try {
-                val response: Response<Void> = RetrofitClient.apiService.deleteUser(userId, authTokenHeader) // Pasar el token
+                val response: Response<Void> = RetrofitClient.apiService.deleteUser(userId, authTokenHeader)
                 if (response.isSuccessful) {
                     Log.d("AdminUserActivity", "Usuario con ID $userId eliminado correctamente en la API.")
                     Toast.makeText(this@AdminUserActivity, "Usuario eliminado correctamente", Toast.LENGTH_SHORT).show()
-                    getAllUsersFromAPI()    // Refrescar la lista de usuarios después de eliminar para que sea visible la eliminación del user
-                } else if (response.code() == 401 || response.code() == 403) {  // Acceso denegado: token inválido, expirado o sin permisos
+                    getAllUsersFromAPI()
+                } else if (response.code() == 401 || response.code() == 403) {
                     Log.w("AdminUserActivity", "deleteUserFromAPI: Acceso denegado. Código: ${response.code()}")
                     Toast.makeText(this@AdminUserActivity, "Acceso denegado. Por favor, inicie sesión de nuevo.", Toast.LENGTH_LONG).show()
                     tokenStorage.deleteAuthToken()
@@ -352,29 +384,27 @@ class AdminUserActivity : AppCompatActivity() {
                     finish()
                 }
                 else {
-                    // Otros errores: 404 Not Found si el usuario no existe, 500 Internal Server Error por si sucede alguna otra cosa más
                     val errorBody = response.errorBody()?.string()
                     val errorCode = response.code()
                     Log.e("AdminUserActivity", "Error de API al eliminar usuario con ID $userId: Código $errorCode, Contenido: $errorBody")
                     Toast.makeText(this@AdminUserActivity, "Error al eliminar usuario", Toast.LENGTH_SHORT).show()
-
                     if (!errorBody.isNullOrBlank()) {
                         Log.e("AdminUserActivity", "Contenido del error de eliminación: $errorBody")
                     }
                 }
             } catch (e: Exception) {
-                // Error de red o excepción inesperada
                 Log.e("AdminUserActivity", "Excepción al eliminar usuario con ID $userId", e)
                 Toast.makeText(this@AdminUserActivity, getString(R.string.error_api_connection), Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    // Dialogo para crear usuario
+
     private fun createUser(newUser: User, dialog: AlertDialog) {
         Toast.makeText(this, "Creando usuario...", Toast.LENGTH_SHORT).show()
+        // tokenStorage heredada de BaseActivity
         val token = tokenStorage.getAuthToken()
-        if (token == null) {    // Verificar si hay token, si no redirigir a login
+        if (token == null) {
             Log.w("AdminUserActivity", "createUser: No hay token guardado. Redirigiendo a login.")
             Toast.makeText(this, "Sesión expirada o no iniciada.", Toast.LENGTH_LONG).show()
             startActivity(Intent(this, LoginUserActivity::class.java))
@@ -383,22 +413,21 @@ class AdminUserActivity : AppCompatActivity() {
             return
         }
 
-        // Token con Bearer para que no necesite otro login
         val authTokenHeader = "Bearer $token"
-        Log.d("AdminUserActivity", "createUser: Usando token: ${authTokenHeader}") // Log para depurar
+        Log.d("AdminUserActivity", "createUser: Usando token: ${authTokenHeader}")
 
-        lifecycleScope.launch {     //Corutina
+        lifecycleScope.launch {
             try {
-                val response: Response<User> = RetrofitClient.apiService.createUser(newUser, authTokenHeader) // Le pasamos a la API el token + objeto User
+                val response: Response<User> = RetrofitClient.apiService.createUser(newUser, authTokenHeader)
 
-                if (response.isSuccessful && response.body() != null) {     //Respuesta
-                    val createdUser = response.body()   // La respuesta incluye el usuario creado
+                if (response.isSuccessful && response.body() != null) {
+                    val createdUser = response.body()
                     Log.d("AdminUserActivity", "Usuario creado correctamente en la API: ${createdUser?.name}")
                     Toast.makeText(this@AdminUserActivity, "Usuario creado correctamente", Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
                     selectedImageUri = null
-                    getAllUsersFromAPI() // Refrescar la lista después de crear
-                } else if (response.code() == 401 || response.code() == 403) {  // Acceso denegado
+                    getAllUsersFromAPI()
+                } else if (response.code() == 401 || response.code() == 403) {
                     Log.w("AdminUserActivity", "createUser: Acceso denegado. Código: ${response.code()}")
                     Toast.makeText(this@AdminUserActivity, "Acceso denegado. Por favor, inicia sesión de nuevo.", Toast.LENGTH_LONG).show()
                     tokenStorage.deleteAuthToken()
@@ -406,7 +435,7 @@ class AdminUserActivity : AppCompatActivity() {
                     finish()
                     dialog.dismiss()
                 }
-                else {  //Otros errores
+                else {
                     val errorBody = response.errorBody()?.string()
                     val errorCode = response.code()
                     Log.e("AdminUserActivity", "Error de API al crear usuario: Código $errorCode, Contenido: $errorBody")
@@ -415,7 +444,7 @@ class AdminUserActivity : AppCompatActivity() {
                         Log.e("AdminUserActivity", "Cuerpo del error de creación: $errorBody")
                     }
                 }
-            } catch (e: Exception) {    // Error de red o excepción inesperada
+            } catch (e: Exception) {
                 Log.e("AdminUserActivity", "Excepción al crear usuario", e)
                 Toast.makeText(this@AdminUserActivity, getString(R.string.error_api_connection), Toast.LENGTH_SHORT).show()
             }
@@ -424,6 +453,7 @@ class AdminUserActivity : AppCompatActivity() {
     // Actualizar usuario
     private fun updateUser(updatedUser: User, dialog: AlertDialog) {
         Toast.makeText(this, "Actualizando usuario...", Toast.LENGTH_SHORT).show()
+        // Usa la propiedad 'tokenStorage' heredada de BaseActivity
         val token = tokenStorage.getAuthToken()
         if (token == null) {
             Log.w("AdminUserActivity", "updateUser: No hay token guardado. Redirigiendo a login.")

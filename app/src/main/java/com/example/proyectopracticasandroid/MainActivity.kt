@@ -8,8 +8,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.proyectopracticasandroid.databinding.ActivityMainBinding
-import androidx.appcompat.widget.PopupMenu // Import PopupMenu
-import com.example.proyectopracticasandroid.api.TokenStorage // Import TokenStorage para cerrar sesión
+import androidx.appcompat.widget.PopupMenu
+import com.example.proyectopracticasandroid.api.TokenStorage
 
 class MainActivity : AppCompatActivity() {
 
