@@ -65,6 +65,12 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Ir a Productos", Toast.LENGTH_SHORT).show()
                     true
                 }
+                R.id.menu_admin_products -> {
+                val intent = Intent(this, AdminProductActivity::class.java)
+                startActivity(intent)
+                Toast.makeText(this, "Ir a Productos", Toast.LENGTH_SHORT).show()
+                true
+            }
                 //Para ir a login usuarios basta con Salir
                 /*R.id.menu_users -> {
                     Toast.makeText(this, "Ir a login Usuarios", Toast.LENGTH_SHORT).show()

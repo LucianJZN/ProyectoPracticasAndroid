@@ -48,6 +48,25 @@ interface ApiService {
     //suspend fun getAllProducts(): List<Product>
     fun getAllProducts(): Call<List<Product>>
 
+    @POST("/products/new")
+    suspend fun createProduct(
+        @Body products: Product,
+        //@Header("Authorization") authToken: String    //Puede que sea necesario implementar el token tambien en productos
+    ): Response<Product>
+
+    @PUT("/products/update/{productId}")
+    suspend fun updateProduct(
+        @Path("productId") productId: Long,
+        @Body product: Product,
+        //@Header("Authorization") authToken: String
+    ): Response<Product>
+
+    @DELETE("/products/delete/{productId}")
+    suspend fun deleteProduct(
+        @Path("productId") productId: Long,
+        //@Header("Authorization") authToken: String
+    ): Response<Product>
+
 }
 
 /*

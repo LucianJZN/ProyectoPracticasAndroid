@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
     <!--Configuración para que soporte solo pantallas grandes/tablets-->
     <supports-screens
         android:smallScreens="false"
@@ -41,7 +45,8 @@
         
         <!--Hay que agregar todas las activities que vayamos a utilizar para que AndroidStudio las detecte.-->
         <activity android:name=".ProductActivity">
-
+        </activity>
+        <activity android:name=".AdminProductActivity">
         </activity>
         <activity android:name=".AdminUserActivity">
         </activity>

@@ -74,6 +74,18 @@ open class BaseActivity : AppCompatActivity() {
                     Toast.makeText(this, "Ir a Productos", Toast.LENGTH_SHORT).show()
                     true
                 }
+                R.id.menu_admin_products -> {
+                    //Navegar a ProudctAcivity
+                    // val intent = Intent(this, ProductActivity::class.java) // <-- si ProductActivity heredara de BaseActivity
+                    // if (loggedInUser != null) intent.putExtra("USER", loggedInUser as Serializable) // <-- Pasa el objeto User
+                    // startActivity(intent)
+                    // O si ProductActivity NO hereda de BaseActivity (como en tu código actual de ProductActivity):
+                    val intent = Intent(this, AdminProductActivity::class.java)
+                    if (loggedInUser != null) intent.putExtra("USER", loggedInUser as Serializable)
+                    startActivity(intent)
+                    Toast.makeText(this, "Ir a Administrar Productos", Toast.LENGTH_SHORT).show()
+                    true
+                }
                 R.id.menu_admin_users -> {
                     // Navegar a AdminUserActivity
                     val intent = Intent(this, AdminUserActivity::class.java)
