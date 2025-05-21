@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:ignore="MissingDefaultResource"
+
+    >
+    <!--Hemos ocultado el menú lateral-->
+    <!--tools:openDrawer="start"-->
+
+    <!-- Contenido principal de la aplicación -->
+
+    <!-- Menú deslizable (Drawer) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Contenido principal -->
+        <include
+            android:id="@+id/app_bar_main"
+            layout="@layout/app_bar_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_products"
+            android:layout_width="match_parent"
+            android:layout_height="540dp"
+            android:background="@color/grey_light"
+            android:layout_marginTop="150dp"
+            app:layout_constraintTop_toBottomOf="@id/createInvoice"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Botón 1 -->
+        <Button
+            android:id="@+id/btn_get_invoices_by_date"
+            android:layout_width="190dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="@dimen/buttons_invoice_margin_top"
+            android:background="@drawable/btn_square"
+            android:text="@string/get_invoices_by_date"
+            android:textSize="14sp"
+            app:backgroundTint="@color/red"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_get_invoices_from_this_week" />
+
+        <!-- Botón 2 -->
+        <Button
+            android:id="@+id/btn_get_invoices_from_this_week"
+            android:layout_width="190dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="@dimen/buttons_invoice_margin_top"
+            android:background="@drawable/btn_square"
+            android:text="@string/get_invoices_from_this_week"
+            android:textSize="14sp"
+            app:backgroundTint="@color/red"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_get_invoices_by_date"
+            app:layout_constraintEnd_toStartOf="@id/btn_get_invoices_from_this_month" />
+
+        <!-- Botón 3 -->
+        <Button
+            android:id="@+id/btn_get_invoices_from_this_month"
+            android:layout_width="190dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="@dimen/buttons_invoice_margin_top"
+            android:background="@drawable/btn_square"
+            android:text="@string/get_invoices_from_this_month"
+            android:textSize="14sp"
+            app:backgroundTint="@color/red"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_get_invoices_from_this_week"
+            app:layout_constraintEnd_toStartOf="@id/btn_backup_invoice" />
+
+        <!-- Botón 4 -->
+        <Button
+            android:id="@+id/btn_backup_invoice"
+            android:layout_width="190dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="@dimen/buttons_invoice_margin_top"
+            android:background="@drawable/btn_square"
+            android:text="@string/backup_invoice"
+            android:textSize="14sp"
+            app:backgroundTint="@color/red"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_get_invoices_from_this_month"
+            app:layout_constraintEnd_toStartOf="@id/btn_invoice_report" />
+
+        <!-- Botón 5 -->
+        <Button
+            android:id="@+id/btn_invoice_report"
+            android:layout_width="190dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="@dimen/buttons_invoice_margin_top"
+            android:background="@drawable/btn_square"
+            android:text="@string/invoice_report"
+            android:textSize="14sp"
+            app:backgroundTint="@color/red"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_backup_invoice"
+            app:layout_constraintEnd_toStartOf="@id/createInvoice" />
+
+        <!-- Botón 6 -->
+        <Button
+            android:id="@+id/createInvoice"
+            android:layout_width="190dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="@dimen/buttons_invoice_margin_top"
+            android:background="@drawable/btn_square"
+            android:text="@string/add_invoice"
+            android:textSize="14sp"
+            app:backgroundTint="@color/yellow"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_invoice_report" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/activity_main_drawer" />
+</androidx.drawerlayout.widget.DrawerLayout>

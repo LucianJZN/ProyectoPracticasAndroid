@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Fondo blanco -->
+    <solid android:color="#FFFFFF"/>
+
+    <!-- Borde negro de 2dp -->
+    <stroke android:color="@color/grey"  android:width="2dp"/>
+
+    <!-- Bordes redondeados con un radio de 8dp -->
+    <corners android:radius="8dp"/>
+</shape>

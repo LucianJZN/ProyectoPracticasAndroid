@@ -1,0 +1,67 @@
+<resources>
+    <string name="app_name">ProyectoPracticasAndroid</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <!--General-->
+    <string name="password">Contraseña</string>
+    <string name="error_incorrect_password">Contraseña incorrecta</string>
+    <string name="error_api_connection">Error de conexión</string>
+    <string name="msg_calling_api">Llamando a la API</string>
+
+
+    <!--Menu-->
+    <string name="nav_title">Título de la pantalla</string>
+    <string name="menu_users">Usuarios</string>
+    <string name="menu_products">Productos</string>
+    <string name="menu_invoices">Facturas</string>
+    <string name="menu_inventory">Inventario</string>
+    <string name="menu_home">Casa</string>
+    <string name="menu_gallery">Galeria</string>
+    <string name="menu_slideshow">Slideshow</string>
+
+    <!--Filters-->
+    <string name="filter_write">Escribe:</string>
+    <string name="your_top_10">Tu Top 10</string>
+    <string name="filter_by_name">Filtrar por nombre</string>
+
+    <!--User-->
+    <string name="img_user_description">Imagen del usuario</string>
+    <string name="title_activity_login_user">Usuarios</string>
+    <string name="add_user">Agregar usuario</string>
+    <string name="error_loading_users">Error al cargar los usuarios</string>
+
+    <!--Product-->
+    <string name="name_product">Nombre del Producto</string>
+    <string name="product_quantity">Cantidad: 0</string>
+    <string name="minimum_amount">Mínimo</string>
+    <string name="btn_add_product">+</string>
+    <string name="btn_subtract_product">-</string>
+    <string name="img_product_description">Imagen que representa un producto.</string>
+    <string name="add_product">Agregar producto</string>
+    <string name="title_product_activity">Productos</string>
+
+    <!--Invoice-->
+    <string name="get_invoices_from_this_week">Albaranes semana en curso</string>
+    <string name="get_invoices_by_date">Filtrar por fecha</string>
+    <string name="add_invoice">Crear albaran</string>
+    <string name="get_invoices_from_this_month">Albaranes mes en curso</string>
+    <string name="backup_invoice">Backup albarán</string>
+    <string name="invoice_report">Informe</string>
+    <string name="CIF">"CIF: "</string>
+    <string name="date_invoice">"Fecha: "</string>
+    <string name="price_invoice">"Importe: "</string>
+    <string name="paid_invoice">Pagado</string>
+    <string name="name_invoice">Nombre albarán</string>
+    <string name="error_password_empty">Error, contraseña vacia.</string>
+    <string name="error_login_failed">Error, login fallado.</string>
+    <string name="title_activity_admin_user">Administrar Usuarios</string>
+    <string name="msg_users_loaded">Usuarios cargados</string>
+    <string name="menu_admin_users">Administrar Usuarios</string>
+
+
+</resources>
