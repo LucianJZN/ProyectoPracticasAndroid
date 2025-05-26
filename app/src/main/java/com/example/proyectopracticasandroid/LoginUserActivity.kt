@@ -99,13 +99,7 @@ class LoginUserActivity : AppCompatActivity() {
 
                         //Al hacer click sobre un usuario comprobamos si es admin para pedir pass o no
                         adapterUser = UserAdapter(listUsers) { clickedUser ->
-                            if (clickedUser.rol.lowercase() == "administrador") {
-                                // Para admins, mostramos el diálogo de contraseña para hacer login
-                                showPasswordDialog(clickedUser)
-                            } else {
-                                // Para usuarios no admin vamos directo a productos
-                                goToProductActivity(clickedUser)
-                            }
+                            goToProductActivity(clickedUser) // Todos los usuarios van directo a productos
                         }
                         recyclerView.adapter = adapterUser
                     }
