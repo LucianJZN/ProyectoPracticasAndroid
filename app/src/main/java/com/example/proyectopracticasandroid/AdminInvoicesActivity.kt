@@ -6,12 +6,12 @@ import android.util.Log
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectopracticasandroid.adapter.InvoicesAdapter
 import com.example.proyectopracticasandroid.api.RetrofitClient
 import com.example.proyectopracticasandroid.model.Invoice
-import com.google.ar.imp.view.View
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
@@ -40,6 +40,15 @@ class AdminInvoicesActivity : BaseActivity() {
         createInvoiceButton.setOnClickListener {
             showCreateInvoiceDialog()
         }
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        //Botón del menú
+        val btnSimpleMenu: ImageButton = findViewById(R.id.btn_simple_menu)
+        btnSimpleMenu.setOnClickListener { view ->
+            showSimpleMenu(view) // Método heredado
+        }
+        //Configuramos el título del ProductActivity
+        findViewById<TextView>(R.id.nav_title)?.text = getString(R.string.title_invoice_activity)
 
         loadInvoices()
     }

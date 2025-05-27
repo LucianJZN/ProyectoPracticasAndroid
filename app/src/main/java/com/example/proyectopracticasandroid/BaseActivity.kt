@@ -75,7 +75,7 @@ open class BaseActivity : AppCompatActivity() {
                 R.id.menu_admin_products -> {
                     val intent = Intent(this, AdminProductActivity::class.java)
                     if (loggedInUser != null) intent.putExtra("USER", loggedInUser as Serializable)
-                    startActivity(intent)
+                    requireAdminPasswordAndLaunch(intent)
                     Toast.makeText(this, "Ir a Administrar Productos", Toast.LENGTH_SHORT).show()
                     true
                 }
