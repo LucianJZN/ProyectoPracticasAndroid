@@ -9,11 +9,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.proyectopracticasandroid.databinding.ActivityMainBinding
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.lifecycleScope
 import com.example.proyectopracticasandroid.api.RetrofitClient
 import com.example.proyectopracticasandroid.api.TokenStorage
-import com.example.proyectopracticasandroid.databinding.ActivityMainBinding
 import com.example.proyectopracticasandroid.model.User
 import com.example.proyectopracticasandroid.model.UserLoginDTO
 import com.example.proyectopracticasandroid.model.UserLoginResponseDTO
@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.appBarMain.toolbar)
 
+        // Obtenemos el rol del usuario desde el Intent
         currentUserRole = intent.getStringExtra("USER_ROLE")
         loggedInUser = intent.getSerializableExtra("USER") as? User
 
@@ -48,8 +49,10 @@ class MainActivity : AppCompatActivity() {
 
         Log.d("MainActivity", "Usuario logueado con rol: $currentUserRole")
 
+        // TokenStorage
         tokenStorage = TokenStorage(this)
 
+        // Botón del menú desplegable
         binding.appBarMain.btnSimpleMenu?.setOnClickListener { view ->
             showSimpleMenu(view)
         }
@@ -65,6 +68,7 @@ class MainActivity : AppCompatActivity() {
             inflater.inflate(R.menu.user_menu, popupMenu.menu)
         }
 
+        // Configurar listener para las opciones del menú
         popupMenu.setOnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
                 R.id.menu_products -> {
@@ -189,10 +193,14 @@ class MainActivity : AppCompatActivity() {
         tokenStorage.saveAuthToken(token)
     }
 
+    // Cerrar sesión
     private fun performLogout() {
         tokenStorage.deleteAuthToken()
         Log.d("MainActivity", "Token eliminado. Sesión cerrada.")
+
+        // Redirigir al usuario a la pantalla de login
         val intent = Intent(this, LoginUserActivity::class.java)
+        // Flags para actividades abiertas y evitar volver atrás
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()

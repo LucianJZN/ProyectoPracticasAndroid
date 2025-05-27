@@ -1,5 +1,7 @@
 package com.example.proyectopracticasandroid.model
 
+import java.time.LocalDateTime
+
 data class Invoice(
     val invoiceId: Long? = null,
     val date: String,

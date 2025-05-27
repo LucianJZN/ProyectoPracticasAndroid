@@ -83,7 +83,8 @@ class LoginUserActivity : AppCompatActivity() {
     }
 
     private fun getAllUsersFromAPI() {
-        Toast.makeText(this, getString(R.string.msg_calling_api), Toast.LENGTH_SHORT).show() //Llamando a la API
+        Toast.makeText(this, getString(R.string.msg_calling_api), Toast.LENGTH_SHORT)
+            .show() //Llamando a la API
 
         lifecycleScope.launch { // Usar coroutine para la llamada suspend
             try {
@@ -93,95 +94,40 @@ class LoginUserActivity : AppCompatActivity() {
                     val users = response.body()
                     if (users != null) {
                         val sortedUsers = users.sortedBy {  //Ordena alfabeticamente
-                            it.name ?: ""   //el ? es por si acaso hay un usuario sin nombre que no deberia pasar realmente
+                            it.name
+                                ?: ""   //el ? es por si acaso hay un usuario sin nombre que no deberia pasar realmente
                         }
-                        listUsers = sortedUsers.filter { it.enabled }.toMutableList() //Se queda solo los usuarios habilitados/enabled
+                        listUsers = sortedUsers.filter { it.enabled }
+                            .toMutableList() //Se queda solo los usuarios habilitados/enabled
 
                         //Al hacer click sobre un usuario comprobamos si es admin para pedir pass o no
                         adapterUser = UserAdapter(listUsers) { clickedUser ->
-                            goToProductActivity(clickedUser) // Todos los usuarios van directo a productos
+                                goToProductActivity(clickedUser)
                         }
                         recyclerView.adapter = adapterUser
                     }
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorCode = response.code()
-                    Log.e("LoginUserActivity", "Error de API al obtener usuarios: Código $errorCode, Contenido: $errorBody")
-                    Toast.makeText(this@LoginUserActivity, getString(R.string.error_loading_users), Toast.LENGTH_SHORT).show() //Error al cargar los usuarios
+                    Log.e(
+                        "LoginUserActivity",
+                        "Error de API al obtener usuarios: Código $errorCode, Contenido: $errorBody"
+                    )
+                    Toast.makeText(
+                        this@LoginUserActivity,
+                        getString(R.string.error_loading_users),
+                        Toast.LENGTH_SHORT
+                    ).show() //Error al cargar los usuarios
                 }
             } catch (t: Throwable) {
                 Log.e("LoginUserActivity", "Excepción al obtener usuarios", t)
-                Toast.makeText(this@LoginUserActivity, getString(R.string.error_api_connection), Toast.LENGTH_SHORT).show() //Error de conexión
+                Toast.makeText(
+                    this@LoginUserActivity,
+                    getString(R.string.error_api_connection),
+                    Toast.LENGTH_SHORT
+                ).show() //Error de conexión
             }
         }
-    }
-
-    //LOGIN de Admin
-    //Esta función se va a llamar cuando se haga click en un usuario y este es un admin
-    //Comprueba que la contraseña introducida es correcta -> entonces lleva a ProductActivity
-    private fun showPasswordDialog(clickedUser: User) {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_password, null)
-        val editPassword = dialogView.findViewById<EditText>(R.id.edit_password)
-        val btnConfirm = dialogView.findViewById<Button>(R.id.btn_confirm)
-        val btnCancel = dialogView.findViewById<Button>(R.id.btn_cancel)
-
-        val dialog = android.app.AlertDialog.Builder(this)
-            .setView(dialogView)
-            .setCancelable(false)
-            .create()
-
-        btnConfirm.setOnClickListener {
-            val enteredPassword = editPassword.text.toString()
-            if (enteredPassword.isBlank()) {
-                editPassword.error = getString(R.string.error_password_empty)
-                return@setOnClickListener
-            }
-
-            val adminLoginIdentifier = clickedUser.name //Tambien se podria con email
-
-            // Llamada a la API
-            lifecycleScope.launch { // Iniciar una nueva corrutina
-                try {
-                    //Petición a la API
-                    val loginRequest = UserLoginDTO(adminLoginIdentifier, enteredPassword)
-                    //Respuesta de la API, response que contiene el Token
-                    val response: Response<UserLoginResponseDTO> = RetrofitClient.apiService.login(loginRequest)
-
-                    if (response.isSuccessful) {
-                        val loginResponse = response.body()
-                        if (loginResponse != null) {
-                            val token = loginResponse.token
-                            Log.d("LoginUserActivity", "Login exitoso. Token recibido: $token")
-                            saveToken(token)
-                            dialog.dismiss()
-                            goToProductActivity(clickedUser)
-
-                        } else {
-                            Log.e("LoginUserActivity", "Login exitoso pero no devuelve token.")
-                            Toast.makeText(this@LoginUserActivity, getString(R.string.error_login_failed), Toast.LENGTH_SHORT).show()
-                        }
-                    } else if (response.code() == 401) {
-                        Log.w("LoginUserActivity", "Login fallido: Datos incorrectos.")
-                        editPassword.error = getString(R.string.error_incorrect_password)
-                        Toast.makeText(this@LoginUserActivity, getString(R.string.error_incorrect_password), Toast.LENGTH_SHORT).show()
-                    } else {
-                        val errorBody = response.errorBody()?.string()
-                        val errorCode = response.code()
-                        Log.e("LoginUserActivity", "Error de API durante login: Código $errorCode, Contenido: $errorBody")
-                        Toast.makeText(this@LoginUserActivity, getString(R.string.error_api_connection), Toast.LENGTH_SHORT).show()
-                    }
-
-                } catch (e: Exception) {
-                    Log.e("LoginUserActivity", "Excepción durante el login", e)
-                    Toast.makeText(this@LoginUserActivity, getString(R.string.error_api_connection), Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        btnCancel.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
     }
 
     private fun goToProductActivity(clickedUser: User) {

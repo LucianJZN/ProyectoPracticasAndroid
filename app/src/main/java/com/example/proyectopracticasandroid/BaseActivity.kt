@@ -53,19 +53,29 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     // Función para mostrar el menú simple, utiliza currentUserRole que deriva del loggedInUser.
-    fun showSimpleMenu(view: View) {
-        val popupMenu = PopupMenu(this, view)
+    protected open fun showSimpleMenu(view: View) {
+        val popupMenu = PopupMenu(this, view) // this se refiere a la Activity que hereda
         val inflater = popupMenu.menuInflater
 
-        if (currentUserRole.equals("ADMINISTRADOR", ignoreCase = true)) {
-            inflater.inflate(R.menu.admin_menu, popupMenu.menu)
+        // Mostrar menú correcto basado en el rol del usuario (currentUserRole)
+        if (currentUserRole == "ADMINISTRADOR") {
+            inflater.inflate(R.menu.admin_menu, popupMenu.menu) // Mostrar menú de admin
         } else {
-            inflater.inflate(R.menu.user_menu, popupMenu.menu)
+            inflater.inflate(R.menu.user_menu, popupMenu.menu) // Mostrar menú de usuario común
         }
 
+        // Al lanzar una Activitie que hereden de BaseActivity,
+        // hay que pasarle el objeto User completo -> loggedInUser
+
+        // Configurar listener para las opciones del menú
         popupMenu.setOnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
                 R.id.menu_products -> {
+                    //Navegar a ProudctAcivity
+                    // val intent = Intent(this, ProductActivity::class.java) // <-- si ProductActivity heredara de BaseActivity
+                    // if (loggedInUser != null) intent.putExtra("USER", loggedInUser as Serializable) // <-- Pasa el objeto User
+                    // startActivity(intent)
+                    // O si ProductActivity NO hereda de BaseActivity (como en tu código actual de ProductActivity):
                     val intent = Intent(this, ProductActivity::class.java)
                     if (loggedInUser != null) intent.putExtra("USER", loggedInUser as Serializable)
                     startActivity(intent)
@@ -73,6 +83,11 @@ open class BaseActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menu_admin_products -> {
+                    //Navegar a ProudctAcivity
+                    // val intent = Intent(this, ProductActivity::class.java) // <-- si ProductActivity heredara de BaseActivity
+                    // if (loggedInUser != null) intent.putExtra("USER", loggedInUser as Serializable) // <-- Pasa el objeto User
+                    // startActivity(intent)
+                    // O si ProductActivity NO hereda de BaseActivity (como en tu código actual de ProductActivity):
                     val intent = Intent(this, AdminProductActivity::class.java)
                     if (loggedInUser != null) intent.putExtra("USER", loggedInUser as Serializable)
                     requireAdminPasswordAndLaunch(intent)
@@ -80,12 +95,14 @@ open class BaseActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menu_admin_users -> {
+                    // Navegar a AdminUserActivity
                     val intent = Intent(this, AdminUserActivity::class.java)
                     if (loggedInUser != null) {
                         intent.putExtra("USER", loggedInUser as Serializable)
                         Log.d("BaseActivity", "Lanzando AdminUserActivity con objeto User.")
                     } else {
                         Log.e("BaseActivity", "Error al lanzar AdminUserActivity: loggedInUser es null.")
+                        // Mensaje para debuguear, para saber si no hay un usuarios logueado.
                     }
                     requireAdminPasswordAndLaunch(intent)
                     Toast.makeText(this, "Ir a Administrador de Usuarios", Toast.LENGTH_SHORT).show()
