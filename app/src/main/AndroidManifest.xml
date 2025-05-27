@@ -48,6 +48,8 @@
         </activity>
         <activity android:name=".AdminProductActivity">
         </activity>
+        <activity android:name=".AdminInvoicesActivity">
+        </activity>
         <activity android:name=".AdminUserActivity">
         </activity>
     </application>

@@ -42,7 +42,7 @@ tools:ignore="MissingDefaultResource">
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/createInvoice"
         android:layout_width="190dp"
         android:layout_height="170dp"
         android:layout_marginEnd="53dp"

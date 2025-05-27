@@ -1,5 +1,6 @@
 package com.example.proyectopracticasandroid
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import com.example.proyectopracticasandroid.decoration.ProductDecoration
 import android.content.res.Resources
@@ -60,12 +61,8 @@ class ProductActivity : BaseActivity() { // Hereda de BaseActivity
 
         //Botón del menú
         val btnSimpleMenu: ImageButton = findViewById(R.id.btn_simple_menu)
-        if (btnSimpleMenu == null) {
-            Log.e("ProductActivity", "ERROR: Botón de menú (R.id.btn_simple_menu) no encontrado en el layout.")
-        } else {
-            btnSimpleMenu.setOnClickListener { view ->
-                showSimpleMenu(view) // Método heredado
-            }
+        btnSimpleMenu.setOnClickListener { view ->
+            showSimpleMenu(view) // Método heredado
         }
 
         //Configuramos el título del ProductActivity
@@ -104,15 +101,11 @@ class ProductActivity : BaseActivity() { // Hereda de BaseActivity
         }
 
         btnAddProduct = findViewById(R.id.btn_add_product)
-        if (btnAddProduct == null) {
-            Log.e("ProductActivity", "ERROR: fab_add_product FAB/Button no encontrado!")
-        } else {
-            // Establece el listener para abrir el diálogo al hacer clic
-            btnAddProduct.setOnClickListener {
-                showAddProductDialog() // Llama a la función que muestra el diálogo
-            }
-            Log.d("ProductActivity", "onCreate: fab_add_product FAB/Button encontrado y listener asignado.")
+        // Establece el listener para abrir el diálogo al hacer clic
+        btnAddProduct.setOnClickListener {
+            showAddProductDialog() // Llama a la función que muestra el diálogo
         }
+        Log.d("ProductActivity", "onCreate: fab_add_product FAB/Button encontrado y listener asignado.")
 
         // Configura el seleccionador de imágenes
         selectImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -168,6 +161,7 @@ class ProductActivity : BaseActivity() { // Hereda de BaseActivity
         adapterProduct.updateList(listaProductos) // Llama al nuevo método del adaptador
     }
 
+    @SuppressLint("UseSwitchCompatOrMaterialCode", "SetTextI18n")
     private fun showAddProductDialog() {
         // Infla el layout del diálogo
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_product, null)
@@ -222,8 +216,8 @@ class ProductActivity : BaseActivity() { // Hereda de BaseActivity
             val amountText = editAmount.text.toString().trim()
             val minimumAmountText = editMinimumAmount.text.toString().trim()
             val priceText = editPrice.text.toString().trim()
-            val sellPriceText = editSellPrice.text.toString().trim()
-            val newDescription = editDescription.text.toString().trim()
+            val sellPriceText= editSellPrice.text.toString().trim()
+            editDescription.text.toString().trim()
 
             val newSeason = switchSeason.isChecked
             val newEnabled = switchEnabled.isChecked

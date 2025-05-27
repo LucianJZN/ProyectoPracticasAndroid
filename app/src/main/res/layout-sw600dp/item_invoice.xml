@@ -9,7 +9,7 @@
     <!-- Item producto -->
     <RelativeLayout
         android:layout_width="250dp"
-        android:layout_height="225dp"
+        android:layout_height="250dp"
         android:background="@drawable/border_product"
         android:padding="0dp"
         tools:ignore="MissingConstraints">

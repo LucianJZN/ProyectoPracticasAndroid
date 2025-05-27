@@ -62,6 +62,7 @@
     <string name="title_activity_admin_user">Administrar Usuarios</string>
     <string name="msg_users_loaded">Usuarios cargados</string>
     <string name="menu_admin_users">Administrar Usuarios</string>
+    <string name="title_invoice_activity">Albaranes\n</string>
 
 
 </resources>

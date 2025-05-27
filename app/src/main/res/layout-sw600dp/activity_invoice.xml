@@ -31,6 +31,8 @@
             android:layout_width="match_parent"
             android:layout_height="540dp"
             android:background="@color/grey_light"
+            android:layout_marginTop="150dp"
+            app:layout_constraintTop_toBottomOf="@id/createInvoice"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -103,11 +105,11 @@
             app:backgroundTint="@color/red"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@id/btn_backup_invoice"
-            app:layout_constraintEnd_toStartOf="@id/button2" />
+            app:layout_constraintEnd_toStartOf="@id/createInvoice" />
 
         <!-- Botón 6 -->
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/createInvoice"
             android:layout_width="190dp"
             android:layout_height="140dp"
             android:layout_marginTop="@dimen/buttons_invoice_margin_top"

@@ -1,5 +1,6 @@
 package com.example.proyectopracticasandroid.api
 
+import com.example.proyectopracticasandroid.model.Invoice
 import com.example.proyectopracticasandroid.model.Product
 import com.example.proyectopracticasandroid.model.User
 import com.example.proyectopracticasandroid.model.UserLoginDTO
@@ -67,6 +68,12 @@ interface ApiService {
         //@Header("Authorization") authToken: String
     ): Response<Product>
 
+    //Albaranes
+    @GET("invoices/getAll")
+    fun getAllInvoices(): Call<List<Invoice>>
+
+    @POST("/invoices/new")
+    fun createInvoice(@Body invoices: Invoice): Call<Invoice>
 }
 
 /*

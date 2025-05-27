@@ -103,11 +103,11 @@
             app:backgroundTint="@color/red"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@id/btn_backup_invoice"
-            app:layout_constraintEnd_toStartOf="@id/button2" />
+            app:layout_constraintEnd_toStartOf="@id/createInvoice" />
 
         <!-- Botón 6 -->
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/createInvoice"
             android:layout_width="190dp"
             android:layout_height="140dp"
             android:layout_marginTop="@dimen/buttons_invoice_margin_top"
